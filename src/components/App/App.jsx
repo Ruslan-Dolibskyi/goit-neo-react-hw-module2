@@ -5,12 +5,13 @@ import Notification from '../Notification/Notification';
 import Description from '../Description/Description';
 import styles from './App.module.css';
 
+const getInitialFeedback = () => {
+  const savedFeedback = JSON.parse(localStorage.getItem('feedback'));
+  return savedFeedback || { good: 0, neutral: 0, bad: 0 };
+};
+
 const App = () => {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
+  const [feedback, setFeedback] = useState(getInitialFeedback);
 
   const updateFeedback = feedbackType => {
     setFeedback(prevFeedback => ({
@@ -20,11 +21,7 @@ const App = () => {
   };
 
   const resetFeedback = () => {
-    setFeedback({
-      good: 0,
-      neutral: 0,
-      bad: 0,
-    });
+    setFeedback({ good: 0, neutral: 0, bad: 0 });
   };
 
   const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
@@ -33,19 +30,11 @@ const App = () => {
     : 0;
 
   useEffect(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem('feedback'));
-    if (savedFeedback) {
-      setFeedback(savedFeedback);
-    }
-  }, []);
-
-  useEffect(() => {
     localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
 
   return (
     <div className={styles.app}>
-      <h1>Sip Happens Café</h1>
       <Description />
       <Options
         updateFeedback={updateFeedback}
